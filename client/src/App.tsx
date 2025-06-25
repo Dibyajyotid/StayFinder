@@ -9,6 +9,11 @@ import ListingDetails from "./components/ListingDetails";
 import { Toaster } from "./components/ui/sonner";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/PofilePage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PaymentCancelPage from "./pages/PaymentFailedPage";
+import RefundSuccess from "./pages/RefundSuccessPage";
+import RefundFailed from "./pages/RefundFailedPage";
+import SupportPage from "./pages/Support";
 
 function App() {
   return (
@@ -23,6 +28,11 @@ function App() {
         <Route path="/listing/:id" element={<ListingDetails />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/success" element={<PaymentSuccessPage />} />
+        <Route path="/cancel" element={<PaymentCancelPage />} />
+        <Route path="/refund-success" element={<RefundSuccess />} />
+        <Route path="/refund-fail" element={<RefundFailed />} />
+        <Route path="/support" element={<SupportPage />} />
       </Routes>
       <Toaster />
     </>

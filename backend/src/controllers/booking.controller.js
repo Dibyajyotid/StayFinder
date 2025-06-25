@@ -204,6 +204,8 @@ export const cancelBooking = async (req, res) => {
       payment_intent: booking.stripePaymentIntentId, // Use session.payment_intent from webhook
     });
 
+    console.log("🔁 Stripe refund response:", refund);
+
     booking.status = "cancelled";
     await booking.save();
 
@@ -277,6 +279,7 @@ export const createCheckoutSession = async (req, res) => {
   const { phone, checkInDate, checkOutDate } = req.body;
 
   try {
+    // Validate listing
     const listing = await Listing.findById(listingId);
     if (!listing) {
       return res
@@ -284,12 +287,30 @@ export const createCheckoutSession = async (req, res) => {
         .json({ success: false, message: "Listing not found" });
     }
 
+    // Check for existing non-cancelled bookings
+    const existing = await Booking.findOne({
+      userId,
+      listingId,
+      checkInDate,
+      checkOutDate,
+      status: { $ne: "cancelled" },
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking already exists for these dates",
+      });
+    }
+
+    // Calculate total price
     const ONE_DAY = 1000 * 60 * 60 * 24;
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
     const nights = Math.ceil((checkOut - checkIn) / ONE_DAY);
     const totalPrice = nights * listing.price;
 
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -318,7 +339,7 @@ export const createCheckoutSession = async (req, res) => {
       },
     });
 
-    res.json({ url: session.url });
+    res.json({ success: true, url: session.url });
   } catch (error) {
     console.error("Error creating Stripe session:", error);
     res
@@ -327,6 +348,7 @@ export const createCheckoutSession = async (req, res) => {
   }
 };
 
+//webhook function controller
 export const stripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;
@@ -338,12 +360,16 @@ export const stripeWebhook = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.error("Webhook Error:", err.message);
+    console.error("Webhook signature error:", err.message); //debugging log
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  console.log("Webhook received:", event.type); //debugging log
+
   if (event.type === "checkout.session.completed") {
     const data = event.data.object;
+
+    console.log("Session data received:", data); //debugging log
 
     try {
       const existing = await Booking.findOne({
@@ -351,9 +377,13 @@ export const stripeWebhook = async (req, res) => {
         listingId: data.metadata.listingId,
         checkInDate: data.metadata.checkInDate,
         checkOutDate: data.metadata.checkOutDate,
+        status: { $ne: "cancelled"}
       });
 
-      if (existing) return res.status(200).end();
+      if (existing) {
+        console.log("Booking already exists.");
+        return res.status(200).end();
+      }
 
       const booking = new Booking({
         userId: data.metadata.userId,
@@ -363,13 +393,14 @@ export const stripeWebhook = async (req, res) => {
         checkOutDate: data.metadata.checkOutDate,
         totalPrice: data.metadata.totalPrice,
         stripeSessionId: data.id,
+        stripePaymentIntentId: data.payment_intent,
         status: "confirmed",
       });
 
       await booking.save();
-      console.log("✅ Booking confirmed via Stripe");
+      console.log("Booking confirmed via Stripe");
     } catch (err) {
-      console.error("Webhook booking creation failed:", err);
+      console.error("Error inside booking creation:", err);
     }
   }
 

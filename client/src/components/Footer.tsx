@@ -27,7 +27,7 @@ function Footer() {
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-gray-600">
               <li>
-                <Link to={"#"} className="hover:text-gray-900">
+                <Link to={"/support"} className="hover:text-gray-900">
                   Help Center
                 </Link>
               </li>

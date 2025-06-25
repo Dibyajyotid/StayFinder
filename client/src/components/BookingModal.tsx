@@ -179,8 +179,8 @@ const BookingModal = ({ open, onClose, listing }: BookingModalProps) => {
       );
 
       const data = await res.json();
-      if (res.ok && data.sessionUrl) {
-        window.location.href = data.sessionUrl;
+      if (res.ok && data.url) {
+        window.location.href = data.url;
       } else {
         toast.error(data.message || "Failed to start payment");
       }

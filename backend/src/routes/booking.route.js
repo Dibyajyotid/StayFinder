@@ -9,17 +9,11 @@ import {
   getAllBookings,
   getBooking,
   markBookingDeleted,
-  stripeWebhook,
 } from "../controllers/booking.controller.js";
 
 const router = express.Router();
 
 router.get("/", protectRoute, getAllBookings);
-router.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  stripeWebhook
-);
 
 router.patch(
   "/mark-delete/:id",

@@ -19,6 +19,7 @@ import {
 import { Skeleton } from "./ui/skeleton";
 import { Wifi, Car, Tv, Coffee, Bath, Waves, Home } from "lucide-react";
 import { Separator } from "./ui/separator";
+import { toast } from "sonner";
 
 const amenityIcons = {
   WiFi: Wifi,
@@ -66,9 +67,11 @@ function BookingDetails() {
       const data = await res.json();
 
       if (res.ok) {
-        navigate("/bookings");
+        navigate("/refund-success");
+        toast.success("Booking is cancelled and refunded");
       } else {
-        alert(data.message || "Failed to cancel booking");
+        toast.error(data.message);
+        navigate("/refund-fail");
       }
     } catch {
       alert("Something went wrong");

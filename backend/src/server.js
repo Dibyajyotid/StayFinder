@@ -8,9 +8,16 @@ import cors from "cors";
 import listingRoutes from "./routes/listing.route.js";
 import bookingRoutes from "./routes/booking.route.js";
 import dashboardRoute from "./routes/dashboard.route.js";
+import { stripeWebhook } from "./controllers/booking.controller.js";
 
 dotenv.config();
 const app = express();
+
+app.post(
+  "/api/booking/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook
+);
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
