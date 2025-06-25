@@ -327,8 +327,8 @@ export const createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/cancel`,
+      success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
       metadata: {
         userId: userId.toString(),
         listingId: listingId.toString(),
@@ -377,7 +377,7 @@ export const stripeWebhook = async (req, res) => {
         listingId: data.metadata.listingId,
         checkInDate: data.metadata.checkInDate,
         checkOutDate: data.metadata.checkOutDate,
-        status: { $ne: "cancelled"}
+        status: { $ne: "cancelled" },
       });
 
       if (existing) {
