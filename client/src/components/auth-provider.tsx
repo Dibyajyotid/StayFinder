@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkAuth = async () => {
     try {
       const { data } = await axios.get<User>(
-        "http://localhost:2000/api/auth/check",
+        "https://stayfinder-backend-591n.onrender.com/api/auth/check",
         { withCredentials: true }
       );
       setUser(data);
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       await axios.patch(
-        "http://localhost:2000/api/auth/avatar",
+        "https://stayfinder-backend-591n.onrender.com/api/auth/avatar",
         { avatar },
         {
           withCredentials: true,
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       await axios.post(
-        "http://localhost:2000/api/auth/logout",
+        "https://stayfinder-backend-591n.onrender.com/api/auth/logout",
         {},
         { withCredentials: true }
       );

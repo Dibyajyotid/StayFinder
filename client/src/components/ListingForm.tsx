@@ -57,19 +57,22 @@ export default function ListingForm({ onSuccess, onClose }: ListingFormProps) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:2000/api/listing", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          ...form,
-          price: Number(form.price),
-          bedrooms: Number(form.bedrooms),
-          bathrooms: Number(form.bathrooms),
-          hostPhone: Number(form.hostPhone),
-          images,
-        }),
-      });
+      const res = await fetch(
+        "https://stayfinder-backend-591n.onrender.com/api/listing",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            ...form,
+            price: Number(form.price),
+            bedrooms: Number(form.bedrooms),
+            bathrooms: Number(form.bathrooms),
+            hostPhone: Number(form.hostPhone),
+            images,
+          }),
+        }
+      );
 
       const data = await res.json();
       if (res.ok) {

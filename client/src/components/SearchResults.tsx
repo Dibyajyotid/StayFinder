@@ -25,7 +25,9 @@ function SearchResults() {
     if (priceMin) query.set("priceMin", priceMin);
     if (priceMax) query.set("priceMax", priceMax);
 
-    fetch(`http://localhost:2000/api/listing/search?${query.toString()}`)
+    fetch(
+      `https://stayfinder-backend-591n.onrender.com/api/listing/search?${query.toString()}`
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log("Search response:", data);

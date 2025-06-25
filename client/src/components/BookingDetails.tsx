@@ -39,7 +39,7 @@ function BookingDetails() {
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    fetch(`http://localhost:2000/api/booking/${id}`, {
+    fetch(`https://stayfinder-backend-591n.onrender.com/api/booking/${id}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -59,10 +59,13 @@ function BookingDetails() {
 
   const handleCancel = async () => {
     try {
-      const res = await fetch(`http://localhost:2000/api/booking/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `https://stayfinder-backend-591n.onrender.com/api/booking/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       const data = await res.json();
 

@@ -61,7 +61,7 @@ export default function UpdateListingModal({
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:2000/api/listing/${listing._id}`,
+        `https://stayfinder-backend-591n.onrender.com/api/listing/${listing._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

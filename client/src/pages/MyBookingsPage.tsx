@@ -34,7 +34,7 @@ function MyBookingsPage() {
   // }, [removedCancelledBookings]);
 
   useEffect(() => {
-    fetch("http://localhost:2000/api/booking", {
+    fetch("https://stayfinder-backend-591n.onrender.com/api/booking", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -69,7 +69,7 @@ function MyBookingsPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:2000/api/booking/mark-delete/${id}`,
+        `https://stayfinder-backend-591n.onrender.com/api/booking/mark-delete/${id}`,
         {
           method: "PATCH",
           credentials: "include",

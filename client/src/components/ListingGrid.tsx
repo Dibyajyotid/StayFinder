@@ -7,7 +7,7 @@ function ListingGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:2000/api/listing")
+    fetch("https://stayfinder-backend-591n.onrender.com/api/listing")
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
@@ -41,12 +41,14 @@ function ListingGrid() {
   }
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 pl-4 border-l-4 border-l-rose-500">Featured Listings</h2>
+      <h2 className="text-2xl font-bold mb-6 pl-4 border-l-4 border-l-rose-500">
+        Featured Listings
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.isArray(listings) &&
           listings.map((listing) => (
-            <ListingCard key={listing._id} listing={listing}/>
+            <ListingCard key={listing._id} listing={listing} />
           ))}
       </div>
     </div>

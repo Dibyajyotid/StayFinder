@@ -63,7 +63,7 @@ function ListingDetails() {
   const { user } = useAuth();
 
   useEffect(() => {
-    fetch(`http://localhost:2000/api/listing/${id}`)
+    fetch(`https://stayfinder-backend-591n.onrender.com/api/listing/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -101,10 +101,13 @@ function ListingDetails() {
   // }, [listing]);
 
   const handleDelete = async () => {
-    const res = await fetch(`http://localhost:2000/api/listing/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    const res = await fetch(
+      `https://stayfinder-backend-591n.onrender.com/api/listing/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
 
     const data = await res.json();
 

@@ -32,12 +32,18 @@ function Dashboard() {
     const fetchDashboardData = async () => {
       try {
         const [listingsRes, statsRes] = await Promise.all([
-          fetch("http://localhost:2000/api/listing/host/listings", {
-            credentials: "include",
-          }),
-          fetch("http://localhost:2000/api/dashboard/stats", {
-            credentials: "include",
-          }),
+          fetch(
+            "https://stayfinder-backend-591n.onrender.com/api/listing/host/listings",
+            {
+              credentials: "include",
+            }
+          ),
+          fetch(
+            "https://stayfinder-backend-591n.onrender.com/api/dashboard/stats",
+            {
+              credentials: "include",
+            }
+          ),
         ]);
 
         const listingsData = await listingsRes.json();

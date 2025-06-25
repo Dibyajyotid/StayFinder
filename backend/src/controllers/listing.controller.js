@@ -267,11 +267,34 @@ export const updateListing = async (req, res) => {
 };
 
 //delete listing
+import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 export const deleteListing = async (req, res) => {
   const { id } = req.params;
 
   try {
-    await Booking.deleteMany({ listingId: id });
+    const bookings = await Booking.find({ listingId: id, status: "confirmed" });
+
+    // Refund each confirmed booking
+    for (const booking of bookings) {
+      if (booking.stripePaymentIntentId) {
+        try {
+          await stripe.refunds.create({
+            payment_intent: booking.stripePaymentIntentId,
+          });
+          booking.status = "cancelled";
+          await booking.save();
+        } catch (err) {
+          console.error(
+            `Refund failed for booking ${booking._id}:`,
+            err.message
+          );
+        }
+      }
+    }
+
+    // Now delete the listing
     const deletedListing = await Listing.findByIdAndDelete(id);
 
     if (!deletedListing) {
@@ -283,7 +306,7 @@ export const deleteListing = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Listing and its related bookings deleted successfully",
+      message: "Listing deleted and all related bookings refunded",
     });
   } catch (error) {
     console.error("Error deleting accommodation:", error);
