@@ -43,8 +43,8 @@ export const signup = async (req, res) => {
       res.status(201).json({
         success: true,
         user: {
-          id: newUser._id,
-          username: newUser.userName,
+          _id: newUser._id,
+          userName: newUser.userName,
           email: newUser.email,
           avatar: newUser.avatar,
         },
