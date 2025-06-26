@@ -1,0 +1,118 @@
+# 🏡 StayFinder
+
+## ℹ️ About
+
+This project was developed as part of a full-stack web development assignment.  
+The goal was to create an Airbnb-style platform where users can list and book properties with features like authentication, bookings, image uploads, and more.
+
+---
+
+## 🔧 Tech Stack
+
+### Frontend:
+
+- **React.js** (with Vite)
+- **TypeScript**
+- **Tailwind CSS** + **ShadCN UI**
+- **React Router**
+- **Context API** for Authentication
+
+### Backend:
+
+- **Node.js**
+- **Express.js**
+- **MongoDB** (with Mongoose)
+- **JWT** for authentication (stored in HTTP-only cookies)
+- **Stripe** (mock payments for booking)
+- **Cloudinary** (for image uploads)
+
+---
+
+## 🚀 Features
+
+### 🧑‍💼 Authentication
+
+- User Signup/Login with JWT & cookies
+- Logout and session persistence
+- Auth-protected routes (dashboard, bookings)
+
+### 🏘 Listings
+
+- Create, update, and delete your own listings
+- Upload multiple images
+- View listing details with image carousel and map
+
+### 📆 Booking System
+
+- Book listings with custom date selection
+- View all your bookings
+- Hosts can see bookings for their listings
+
+### 📊 Host Dashboard
+
+- View and manage all your hosted listings
+- Analytics-friendly layout for future expansion
+
+### 🎨 UI/UX
+
+- Fully responsive
+- Clean, modern design using **Tailwind CSS** and **ShadCN UI**
+
+---
+
+## 🌐 Deployment
+
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
+
+---
+
+## 🔐 Security & Scalability
+
+- Passwords are hashed using **bcrypt**
+- JWT stored in **HTTP-only cookies**
+- Role-based access control (user vs host)
+- Scalable database via **MongoDB Atlas**
+- Modular controller-service structure
+
+---
+
+## 🛠️ Setup Instructions
+
+### 1. Clone the repository
+
+git clone https://github.com/Dibyajyotid/StayFinder.git
+
+cd stayfinder
+
+cd client
+npm install
+
+cd..
+
+cd backend
+npm install
+
+then make an .env file in the backend with these data and provide own data
+
+JWT_SECRET =
+CLOUDINARY_CLOUD_NAME =
+CLOUDINARY_API_KEY =
+CLOUDINARY_API_SECRET =
+STRIPE_SECRET_KEY =
+CLIENT_URL=
+STRIPE_WEBHOOK_SECRET =  
+MONGO_URI =
+
+🙋‍♂️ Author
+Dibyajyoti Das
+Full-stack Developer | B.Tech CSE
+
+these ase the deployment links
+
+**Frontend deployment link**
+ - https://stay-finder-client-one.vercel.app
+
+**Backend deployment link**
+ - https://stayfinder-backend-591n.onrender.com
