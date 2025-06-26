@@ -35,7 +35,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuth();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setLoading(false);
+    } else {
+      checkAuth();
+    }
   }, []);
 
   const checkAuth = async () => {
