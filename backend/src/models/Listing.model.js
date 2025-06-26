@@ -49,7 +49,6 @@ const listingSchema = new mongoose.Schema(
 
     propertyType: {
       type: String,
-      enum: ["Apartment", "House", "Villa", "Cabin"],
       default: "Apartment",
     },
 
