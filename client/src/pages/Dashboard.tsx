@@ -35,13 +35,13 @@ function Dashboard() {
           fetch(
             "https://stayfinder-backend-591n.onrender.com/api/listing/host/listings",
             {
-              credentials: "include",
+              headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
             "https://stayfinder-backend-591n.onrender.com/api/dashboard/stats",
             {
-              credentials: "include",
+              headers: { Authorization: `Bearer ${token}` },
             }
           ),
         ]);
