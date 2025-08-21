@@ -34,8 +34,14 @@ function MyBookingsPage() {
   // }, [removedCancelledBookings]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token")
     fetch("https://stayfinder-backend-591n.onrender.com/api/booking", {
-      credentials: "include",
+      method: "GET"
+      headers: {
+      "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "", 
+      },
+      
     })
       .then((res) => res.json())
       .then((data) => {
@@ -75,6 +81,7 @@ function MyBookingsPage() {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
           },
         }
       );
