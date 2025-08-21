@@ -53,14 +53,24 @@ const BookingModal = ({ open, onClose, listing }: BookingModalProps) => {
     if (checkIn >= checkOut) {
       return toast.error("Check-in date must be before check-out date.");
     }
+
     try {
       setLoading(true);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You must be logged in to book.");
+        return;
+      }
+
       const res = await fetch(
         `https://stayfinder-backend-591n.onrender.com/api/booking/checkout-session/${listing._id}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // 🔑 attach token
+          },
           body: JSON.stringify({ ...form, listingId: listing._id }),
         }
       );
@@ -124,7 +134,7 @@ const BookingModal = ({ open, onClose, listing }: BookingModalProps) => {
 
         <DialogFooter className="pt-4">
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Processing" : "Book Now"}
+            {loading ? "Processing..." : "Book Now"}
           </Button>
         </DialogFooter>
       </DialogContent>
