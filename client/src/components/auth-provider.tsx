@@ -1,137 +1,3 @@
-// import {
-//   createContext,
-//   useContext,
-//   useState,
-//   useEffect,
-//   type ReactNode,
-// } from "react";
-// import axios from "axios";
-// import { toast } from "sonner";
-// import { useNavigate } from "react-router-dom";
-
-// export interface User {
-//   _id: string;
-//   userName: string;
-//   email: string;
-//   avatar?: string;
-//   createdAt: string;
-// }
-
-// interface AuthContextType {
-//   user: User | null;
-//   login: (user: User) => void;
-//   logout: () => void;
-//   updateProfile: (avatar: string) => Promise<void>;
-//   loading: boolean;
-//   isUpdatingProfile: boolean;
-// }
-
-// const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// export const AuthProvider = ({ children }: { children: ReactNode }) => {
-//   const [user, setUser] = useState<User | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (storedUser) {
-//       setUser(JSON.parse(storedUser));
-//       setLoading(false);
-//     } else {
-//       checkAuth();
-//     }
-//   }, []);
-
-//   const checkAuth = async () => {
-//     try {
-//       const { data } = await axios.get<User>(
-//         "https://stayfinder-backend-591n.onrender.com/api/auth/check",
-//         { withCredentials: true }
-//       );
-//       setUser(data);
-//       localStorage.setItem("user", JSON.stringify(data));
-//     } catch (error) {
-//       setUser(null);
-//       localStorage.removeItem("user");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const login = (userData: User) => {
-//     setUser(userData);
-//     localStorage.setItem("user", JSON.stringify(userData));
-//     setLoading(false);
-//   };
-
-//   const updateProfile = async (avatar: string) => {
-//     setIsUpdatingProfile(true);
-
-//     try {
-//       await axios.patch(
-//         "https://stayfinder-backend-591n.onrender.com/api/auth/avatar",
-//         { avatar },
-//         {
-//           withCredentials: true,
-//         }
-//       );
-
-//       // setUser(res.data);
-//       await checkAuth();
-//       toast.success("Avataar updated successfully");
-//       // localStorage.setItem("user", JSON.stringify(res.data));
-//     } catch (error: any) {
-//       console.error("Error updating profile:", error);
-//       toast.error(error?.response?.data?.message || "Failed to update profile");
-//     } finally {
-//       setIsUpdatingProfile(false);
-//     }
-//   };
-
-//   const logout = async () => {
-//     try {
-//       await axios.post(
-//         "https://stayfinder-backend-591n.onrender.com/api/auth/logout",
-//         {},
-//         { withCredentials: true }
-//       );
-//       localStorage.removeItem("user");
-//       setUser(null);
-//       navigate("/");
-//       // await checkAuth();
-//     } catch (error) {
-//       console.error("Logout failed:", error);
-//       localStorage.removeItem("user");
-//       setUser(null);
-//       navigate("/");
-//     }
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="flex items-center justify-center h-screen">
-//         <div className="text-lg text-gray-500">Loading...</div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <AuthContext.Provider
-//       value={{ user, login, logout, loading, isUpdatingProfile, updateProfile }}
-//     >
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-// export const useAuth = (): AuthContextType => {
-//   const context = useContext(AuthContext);
-//   if (!context) throw new Error("useAuth must be used within an AuthProvider");
-//   return context;
-// };
-
 import {
   createContext,
   useContext,
@@ -153,7 +19,7 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (user: User) => void;
+  login: (user: User, token: string) => void;
   logout: () => Promise<void>;
   updateProfile: (avatar: string) => Promise<void>;
   loading: boolean;
@@ -169,35 +35,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuth(); // always check from backend (cookie-based)
+    checkAuth();
   }, []);
 
   const checkAuth = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       const { data } = await axios.get<User>(
         "https://stayfinder-backend-591n.onrender.com/api/auth/check",
-        { withCredentials: true }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       setUser(data);
     } catch {
       setUser(null);
+      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
   };
 
-  const login = (userData: User) => {
+  const login = (userData: User, token: string) => {
     setUser(userData);
+    localStorage.setItem("token", token);
     setLoading(false);
   };
 
   const updateProfile = async (avatar: string) => {
     setIsUpdatingProfile(true);
     try {
+      const token = localStorage.getItem("token");
       await axios.patch(
         "https://stayfinder-backend-591n.onrender.com/api/auth/avatar",
         { avatar },
-        { withCredentials: true }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       await checkAuth();
       toast.success("Avatar updated successfully");
@@ -211,13 +91,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       await axios.post(
-        "https://stayfinder-backend-591n.onrender.com/api/auth/logout",
-        {},
-        { withCredentials: true }
+        "https://stayfinder-backend-591n.onrender.com/api/auth/logout"
       );
-      setUser(null);
-      navigate("/");
     } catch {
+      // ignore
+    } finally {
+      localStorage.removeItem("token");
       setUser(null);
       navigate("/");
     }
@@ -245,4 +124,3 @@ export const useAuth = (): AuthContextType => {
   if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };
-
