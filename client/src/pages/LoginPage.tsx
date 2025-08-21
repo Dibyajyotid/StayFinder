@@ -41,13 +41,14 @@ function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.user);
+        // ✅ pass both user and token
+        login(data.user, data.token);
         navigate("/");
       } else {
         setError(data.error || "Login Failed");
       }
-    } catch (error) {
-      setError("An Error occurred. Please try again");
+    } catch {
+      setError("An error occurred. Please try again");
     } finally {
       setLoading(false);
     }
