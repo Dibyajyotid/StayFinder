@@ -60,12 +60,15 @@ export default function UpdateListingModal({
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(
         `https://stayfinder-backend-591n.onrender.com/api/listing/${listing._id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: { 
+            "Content-Type": "application/json",
+              Authorization: token ? `Bearer ${token}` : ""
+          },
           body: JSON.stringify({
             ...form,
             price: Number(form.price),
