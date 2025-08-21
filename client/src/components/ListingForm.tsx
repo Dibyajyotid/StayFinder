@@ -57,21 +57,22 @@ export default function ListingForm({ onSuccess, onClose }: ListingFormProps) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token")
+      const token = localStorage.getItem("token");
       const res = await fetch(
         "https://stayfinder-backend-591n.onrender.com/api/listing",
         {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
           },
+          credentials: "include",
           body: JSON.stringify({
             ...form,
             price: Number(form.price),
             bedrooms: Number(form.bedrooms),
             bathrooms: Number(form.bathrooms),
-            hostPhone: Number(form.hostPhone),
+            hostPhone: form.hostPhone, // keep as string to avoid Number issues
             images,
           }),
         }
@@ -95,7 +96,6 @@ export default function ListingForm({ onSuccess, onClose }: ListingFormProps) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* All form inputs remain unchanged */}
         <div>
           <Label>Title</Label>
           <Input name="title" value={form.title} onChange={handleChange} />
