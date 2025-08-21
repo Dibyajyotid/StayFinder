@@ -20,7 +20,7 @@ function SignupPage() {
     confirmPassword: "",
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setloading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -34,12 +34,12 @@ function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setloading(true);
     setError("");
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match");
-      setLoading(false);
+      setloading(false);
       return;
     }
 
@@ -62,16 +62,16 @@ function SignupPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ pass both user and token
+        // ✅ now passing both user & token to auth provider
         login(data.user, data.token);
         navigate("/");
       } else {
         setError(data.error || "SignUp Failed");
       }
-    } catch {
+    } catch (error) {
       setError("An error occurred. Please try again");
     } finally {
-      setLoading(false);
+      setloading(false);
     }
   };
 
@@ -90,6 +90,7 @@ function SignupPage() {
                 {error}
               </div>
             )}
+
             <div className="space-y-4">
               <Label htmlFor="userName">Username</Label>
               <Input
