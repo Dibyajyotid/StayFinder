@@ -3,7 +3,7 @@ import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
 
-//signup
+// signup
 export const signup = async (req, res) => {
   const { userName, email, password } = req.body;
 
@@ -13,18 +13,16 @@ export const signup = async (req, res) => {
     }
 
     if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
-    const user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: "Email already exists" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: "Email already exists" });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -35,50 +33,44 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    if (newUser) {
-      // generate jwt token here
-      generateToken(newUser._id, res);
-      await newUser.save();
+    await newUser.save();
 
-      res.status(201).json({
-        success: true,
-        user: {
-          _id: newUser._id,
-          userName: newUser.userName,
-          email: newUser.email,
-          avatar: newUser.avatar,
-        },
-      });
-    } else {
-      res.status(400).json({ message: "Invalid user data" });
-    }
+    // ✅ Generate JWT token
+    const token = generateToken(newUser._id, res);
+
+    res.status(201).json({
+      success: true,
+      token, // 👈 send token back in response
+      user: {
+        _id: newUser._id,
+        userName: newUser.userName,
+        email: newUser.email,
+        avatar: newUser.avatar,
+      },
+    });
   } catch (error) {
     console.log("Error in signup controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-//login
+// login
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
 
-    if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    generateToken(user._id, res);
+    // ✅ Generate JWT token
+    const token = generateToken(user._id, res);
 
     res.status(200).json({
       success: true,
+      token, // 👈 send token back in response
       user: {
         _id: user._id,
         userName: user.userName,
@@ -92,7 +84,7 @@ export const login = async (req, res) => {
   }
 };
 
-//logout
+// logout
 export const logout = (req, res) => {
   try {
     res.cookie("jwt", "", { maxAge: 0 });
@@ -103,15 +95,13 @@ export const logout = (req, res) => {
   }
 };
 
-//update avatar
+// update avatar
 export const updateAvatar = async (req, res) => {
   try {
     const { avatar } = req.body;
     const userId = req.user._id;
 
-    if (!avatar) {
-      return res.status(400).json({ message: "Avatar is required" });
-    }
+    if (!avatar) return res.status(400).json({ message: "Avatar is required" });
 
     const uploadResponse = await cloudinary.uploader.upload(avatar, {
       folder: "stayFinder/users/avatars",
@@ -129,12 +119,12 @@ export const updateAvatar = async (req, res) => {
       updatedUser,
     });
   } catch (error) {
-    console.log("error in update profile:", error);
+    console.log("Error in update profile:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-//checkauth
+// check auth
 export const checkAuth = (req, res) => {
   try {
     res.status(200).json(req.user);
