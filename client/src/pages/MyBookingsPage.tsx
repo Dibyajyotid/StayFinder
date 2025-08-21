@@ -36,7 +36,7 @@ function MyBookingsPage() {
   useEffect(() => {
     const token = localStorage.getItem("token")
     fetch("https://stayfinder-backend-591n.onrender.com/api/booking", {
-      method: "GET"
+      method: "GET",
       headers: {
       "Content-Type": "application/json",
         Authorization: token ? `Bearer ${token}` : "", 
