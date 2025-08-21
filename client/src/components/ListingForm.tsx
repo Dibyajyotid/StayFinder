@@ -65,7 +65,7 @@ export default function ListingForm({ onSuccess, onClose }: ListingFormProps) {
           headers: { 
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
-          }
+          },
           body: JSON.stringify({
             ...form,
             price: Number(form.price),
