@@ -101,27 +101,27 @@ function ListingDetails() {
   // }, [listing]);
 
   const handleDelete = async () => {
-    const token = localStorage.getItem("token")
-    const res = await fetch(
-      `https://stayfinder-backend-591n.onrender.com/api/listing/${id}`,
-      {
-        method: "DELETE",
-        {
-          "Content-Type": "application/json",
+  const token = localStorage.getItem("token");
+  const res = await fetch(
+    `https://stayfinder-backend-591n.onrender.com/api/listing/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
         Authorization: token ? `Bearer ${token}` : "",
-        },
-      }
-    );
-
-    const data = await res.json();
-
-    if (res.ok) {
-      toast.success("Listing deleted successfully");
-      navigate("/dashboard");
-    } else {
-      toast.error(data.message || "Failed to delete listing");
+      },
     }
-  };
+  );
+
+  const data = await res.json();
+
+  if (res.ok) {
+    toast.success("Listing deleted successfully");
+    navigate("/dashboard");
+  } else {
+    toast.error(data.message || "Failed to delete listing");
+  }
+};
 
   const showPrev = () =>
     setCurrentImage((prev) =>
