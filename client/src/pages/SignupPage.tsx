@@ -20,7 +20,7 @@ function SignupPage() {
     confirmPassword: "",
   });
 
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -34,12 +34,12 @@ function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setloading(true);
+    setLoading(true);
     setError("");
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match");
-      setloading(false);
+      setLoading(false);
       return;
     }
 
@@ -51,7 +51,6 @@ function SignupPage() {
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
             userName: formData.userName,
             email: formData.email,
@@ -63,17 +62,19 @@ function SignupPage() {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.user);
+        // ✅ pass both user and token
+        login(data.user, data.token);
         navigate("/");
       } else {
         setError(data.error || "SignUp Failed");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again");
     } finally {
-      setloading(false);
+      setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
