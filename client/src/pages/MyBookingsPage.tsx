@@ -74,6 +74,7 @@ function MyBookingsPage() {
     });
 
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(
         `https://stayfinder-backend-591n.onrender.com/api/booking/mark-delete/${id}`,
         {
