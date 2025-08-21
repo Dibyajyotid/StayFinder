@@ -29,6 +29,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("token")
     const fetchDashboardData = async () => {
       try {
         const [listingsRes, statsRes] = await Promise.all([
