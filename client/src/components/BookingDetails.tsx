@@ -39,47 +39,58 @@ function BookingDetails() {
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    fetch(`https://stayfinder-backend-591n.onrender.com/api/booking/${id}`, {
-      credentials: "include",
+  const token = localStorage.getItem("token"); // ✅ get token
+
+  fetch(`https://stayfinder-backend-591n.onrender.com/api/booking/${id}`, {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        setBooking(data.data);
+      } else {
+        setError(data.message || "Failed to fetch booking");
+      }
+      setLoading(false);
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setBooking(data.data);
-        } else {
-          setError(data.message || "Failed to fetch booking");
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Something went wrong");
-        setLoading(false);
-      });
-  }, [id]);
+    .catch(() => {
+      setError("Something went wrong");
+      setLoading(false);
+    });
+}, [id]);
 
   const handleCancel = async () => {
-    try {
-      const res = await fetch(
-        `https://stayfinder-backend-591n.onrender.com/api/booking/${id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+  try {
+    const token = localStorage.getItem("token");
 
-      const data = await res.json();
-
-      if (res.ok) {
-        navigate("/refund-success");
-        toast.success("Booking is cancelled and refunded");
-      } else {
-        toast.error(data.message);
-        navigate("/refund-fail");
+    const res = await fetch(
+      `https://stayfinder-backend-591n.onrender.com/api/booking/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+          "Content-Type": "application/json",
+        },
       }
-    } catch {
-      alert("Something went wrong");
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      navigate("/refund-success");
+      toast.success("Booking is cancelled and refunded");
+    } else {
+      toast.error(data.message);
+      navigate("/refund-fail");
     }
-  };
+  } catch {
+    toast.error("Something went wrong");
+  }
+};
+
 
   const images = booking?.listingId.images ?? [];
 
