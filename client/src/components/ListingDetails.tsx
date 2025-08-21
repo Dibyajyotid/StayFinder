@@ -101,11 +101,15 @@ function ListingDetails() {
   // }, [listing]);
 
   const handleDelete = async () => {
+    const token = localStorage.getItem("token")
     const res = await fetch(
       `https://stayfinder-backend-591n.onrender.com/api/listing/${id}`,
       {
         method: "DELETE",
-        credentials: "include",
+        {
+          "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+        },
       }
     );
 
