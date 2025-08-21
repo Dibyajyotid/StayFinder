@@ -57,12 +57,15 @@ export default function ListingForm({ onSuccess, onClose }: ListingFormProps) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(
         "https://stayfinder-backend-591n.onrender.com/api/listing",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          }
           body: JSON.stringify({
             ...form,
             price: Number(form.price),
